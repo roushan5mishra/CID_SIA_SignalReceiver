@@ -1,3 +1,12 @@
+# Scipt Name: arc.py
+
+#Author: Roushan Mishra (roushan5mishra@gmail.com)
+
+#Version: 1.0
+#Created: 16-Apr-16
+
+# Description: This script reads the data received on localhost, port 10006 and decodes it from Contact Id or SIA Level II format
+
 import socket
 import re
 import time
