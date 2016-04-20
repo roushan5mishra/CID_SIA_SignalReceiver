@@ -1,12 +1,3 @@
-# Scipt Name: arc.py
-
-# Author: Roushan Mishra (roushan5mishra@gmail.com)
-
-# Version: 1.0
-# Created: 16-Apr-16
-
-# Description: This script reads the data received on localhost, port 10006 and decodes it from Contact Id or SIA Level II format
-
 import socket
 import re
 import time
@@ -30,10 +21,45 @@ def SIA(msg):
         print "invalid data received\n"
         
     else:
-        #print "Raw message: ",  msg
-        #print "Raw message: ", ' '.join(hex(ord(n)) for n in msg)
-        #print len(msg)
-        print 'SIA '+TimeStamp()+' '+var2+' '+msg[3:7]+ ' '+ msg[14:16]+' '+ msg[12:14]+' '+msg[16:19]
+        print "Raw message: ",  msg
+        print 'Length of received message: %d' % len(msg)
+        print "Hex Value: ", ' '.join(hex(ord(n)) for n in msg)
+        
+        #print 'SIA '+TimeStamp()+' '+var2+' '+msg[3:7]+ ' '+ msg[14:16]+' '+ msg[12:14]+' '+msg[16:19]
+
+        #SIA II & III without text
+
+        if ((msg[2] & '\x3f') == 4) & (len(msg) == 24): #for 4 digit a/c, area 1-9 
+            print 'SIA '+TimeStamp()+' '+var2+' '+msg[3:7]+' '+ msg[12]+ ' '+ msg[13:15]+' '+msg[15:18]
+        elif ((msg[2] & '\x3f') == 4) & (len(msg) == 25): #for 4 digit a/c, area 9-64 
+            print 'SIA '+TimeStamp()+' '+var2+' '+msg[3:7]+' '+ msg[12:14]+ ' '+ msg[14:16]+' '+msg[16:19]
+        elif ((msg[2] & '\x3f') == 5) & (len(msg) == 25): #for 5 digit a/c, area 1-9 
+            print 'SIA '+TimeStamp()+' '+var2+' '+msg[3:8]+' '+ msg[13]+ ' '+ msg[14:16]+' '+msg[16:19]
+        elif ((msg[2] & '\x3f') == 5) & (len(msg) == 26): #for 5 digit a/c, area 9-64 
+            print 'SIA '+TimeStamp()+' '+var2+' '+msg[3:8]+' '+ msg[13:15]+ ' '+ msg[15:17]+' '+msg[17:20]            
+        elif ((msg[2] & '\x3f') == 6) & (len(msg) == 26): #for 6 digit a/c, area 1-9 
+            print 'SIA '+TimeStamp()+' '+var2+' '+msg[3:9]+' '+ msg[14]+ ' '+ msg[15:17]+' '+msg[17:20]
+        elif ((msg[2] & '\x3f') == 6) & (len(msg) == 27): #for 6 digit a/c, area 9-64
+            print 'SIA '+TimeStamp()+' '+var2+' '+msg[3:9]+' '+ msg[14:16]+ ' '+ msg[16:18]+' '+msg[18:21]
+
+        #SIA II & III with ASCII text
+
+        elif ((msg[2] & '\x3f') == 4) & (len(msg) > 25): #for 4 digit a/c, area 1-9 
+            print 'SIA '+TimeStamp()+' '+var2+' '+msg[3:7]+' '+ msg[12]+ ' '+ msg[13:15]+' '+msg[15:18] + msg[22:-6] #double check the last slicer
+        elif ((msg[2] & '\x3f') == 4) & (len(msg) > 26): #for 4 digit a/c, area 9-64 
+            print 'SIA '+TimeStamp()+' '+var2+' '+msg[3:7]+' '+ msg[12:14]+ ' '+ msg[14:16]+' '+msg[16:19]+ msg[23:-6]
+        elif ((msg[2] & '\x3f') == 5) & (len(msg) > 26): #for 5 digit a/c, area 1-9 
+            print 'SIA '+TimeStamp()+' '+var2+' '+msg[3:8]+' '+ msg[13]+ ' '+ msg[14:16]+' '+msg[16:19]+ msg[23:-6]
+        elif ((msg[2] & '\x3f') == 5) & (len(msg) > 27): #for 5 digit a/c, area 9-64 
+            print 'SIA '+TimeStamp()+' '+var2+' '+msg[3:8]+' '+ msg[13:15]+ ' '+ msg[15:17]+' '+msg[17:20]+ msg[24:-6]         
+        elif ((msg[2] & '\x3f') == 6) & (len(msg) > 27): #for 6 digit a/c, area 1-9 
+            print 'SIA '+TimeStamp()+' '+var2+' '+msg[3:9]+' '+ msg[14]+ ' '+ msg[15:17]+' '+msg[17:20]+ msg[24:-6] 
+        elif ((msg[2] & '\x3f') == 6) & (len(msg) > 28): #for 6 digit a/c, area 9-64
+            print 'SIA '+TimeStamp()+' '+var2+' '+msg[3:9]+' '+ msg[14:16]+ ' '+ msg[16:18]+' '+msg[18:21]+ msg[25:-6] 
+
+
+            
+
   
 
 def DecodeData(data):
